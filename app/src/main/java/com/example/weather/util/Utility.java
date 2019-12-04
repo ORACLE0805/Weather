@@ -1,6 +1,7 @@
 package com.example.weather.util;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.example.weather.db.City;
 import com.example.weather.db.County;
@@ -13,8 +14,10 @@ import org.w3c.dom.Text;
 public class Utility {
     //解析省级数据
     public static boolean handleProvinceResponse(String response){
+        Log.d("ttttrrrr","？？？什么玩意");
         if(!TextUtils.isEmpty(response)){
             try{
+                Log.d("ttttrrrr","？？？进没进来？？？");
                 JSONArray allProvinces=new JSONArray(response);
                 for(int i=0;i<allProvinces.length();i++){
                     JSONObject provinceObject = allProvinces.getJSONObject(i);
@@ -37,10 +40,10 @@ public class Utility {
             try{
                 JSONArray allProvinces=new JSONArray(response);
                 for(int i=0;i<allProvinces.length();i++){
-                    JSONObject provinceObject = allProvinces.getJSONObject(i);
+                    JSONObject cityObject = allProvinces.getJSONObject(i);
                     City city=new City();
-                    city.setCityName(provinceObject.getString("name"));
-                    city.setCityCode(provinceObject.getInt("id"));
+                    city.setCityName(cityObject.getString("name"));
+                    city.setCityCode(cityObject.getInt("id"));
                     city.setProvinceId(provinceId);
                     city.save();
                 }
@@ -58,15 +61,16 @@ public class Utility {
             try{
                 JSONArray allProvinces=new JSONArray(response);
                 for(int i=0;i<allProvinces.length();i++){
-                    JSONObject provinceObject = allProvinces.getJSONObject(i);
+                    JSONObject countyObject = allProvinces.getJSONObject(i);
                     County county=new County();
-                    county.setCountyName(provinceObject.getString("name"));
-                    county.setWeatherId(provinceObject.getInt("weather_id"));
+                    county.setCountyName(countyObject.getString("name"));
+                    county.setWeatherId(countyObject.getString("weather_id"));
                     county.setCityId(cityId);
                     county.save();
                 }
                 return true;
             }catch (Exception e){
+                Log.d("ttttrrrr","查县出错");
                 e.printStackTrace();
             }
         }

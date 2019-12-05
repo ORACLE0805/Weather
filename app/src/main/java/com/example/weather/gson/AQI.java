@@ -1,9 +1,9 @@
 package com.example.weather.gson;
 
 public class AQI {
-    public AQIcity city;
-    public class AQIcity{
+    public AQICity city;
+    public class AQICity{
         public String aqi;
-        public  String pm25;
+        public String pm25;
     }
 }

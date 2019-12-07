@@ -5,6 +5,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,10 +23,9 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.weather.gson.Forecast;
 import com.example.weather.gson.Weather;
+import com.example.weather.service.AutoUpdateService;
 import com.example.weather.util.HttpUtil;
 import com.example.weather.util.Utility;
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -50,6 +50,7 @@ public class WeatherActivity extends AppCompatActivity {
     private String mWeatherId;
     public DrawerLayout drawerLayout;
     private Button navButton;
+    private static boolean activeFlag=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class WeatherActivity extends AppCompatActivity {
         //home键
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         navButton = (Button)findViewById(R.id.nav_button);
+        //查询天气
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = prefs.getString("weather",null);
         if(weatherString !=null){
@@ -114,6 +116,7 @@ public class WeatherActivity extends AppCompatActivity {
         }else{
             loadBingPic();
         }
+
     }
 //    根据天气id请求城市天气信息
     public void requestWeather(final String weatherId){
@@ -172,6 +175,23 @@ public class WeatherActivity extends AppCompatActivity {
             TextView minText = (TextView)view.findViewById(R.id.min_text);
             dateText.setText(forecast.date);
             infoText.setText(forecast.more.info);
+            if(forecast.more.info.equals("晴")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_sunny),null,null,null);
+            }else if(forecast.more.info.equals("阴")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_overcast),null,null,null);
+            }else if(forecast.more.info.equals("多云")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_cloudy),null,null,null);
+            }else if(forecast.more.info.equals("小雨")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_little_rain),null,null,null);
+            }else if(forecast.more.info.equals("中雨")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_middle_rain),null,null,null);
+            } else if(forecast.more.info.equals("大雨")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_huge_rain),null,null,null);
+            }else if(forecast.more.info.equals("雷阵雨")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_thunder_temp_rain),null,null,null);
+            }else if(forecast.more.info.equals("阵雨")){
+                infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_temp_rain),null,null,null);
+            }
             maxText.setText(forecast.temperature.max);
             minText.setText(forecast.temperature.min);
             forecastLayout.addView(view);
@@ -187,6 +207,11 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+//        if(!activeFlag){
+            Intent intent = new Intent(this, AutoUpdateService.class);
+            startService(intent);
+//            activeFlag=true;
+//        }
     }
     private void loadBingPic(){
         String requestBingPic = "http://guolin.tech/api/bing_pic";

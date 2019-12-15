@@ -16,12 +16,14 @@ import org.w3c.dom.Text;
 public class Utility {
     //解析省级数据
     public static boolean handleProvinceResponse(String response){
-        Log.d("ttttrrrr","？？？什么玩意");
+        Log.d("ttttrrrr","什么玩意");
         if(!TextUtils.isEmpty(response)){
             try{
-                Log.d("ttttrrrr","？？？进没进来？？？");
+                Log.d("ttttrrrr","进没进来");
+//                建立一个JSON数组类，把返回的信息赋值给这个数组
                 JSONArray allProvinces=new JSONArray(response);
                 for(int i=0;i<allProvinces.length();i++){
+//                    对应每一个值
                     JSONObject provinceObject = allProvinces.getJSONObject(i);
                     Province province=new Province();
                     province.setProvinceName(provinceObject.getString("name"));

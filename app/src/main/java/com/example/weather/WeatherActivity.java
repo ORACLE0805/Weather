@@ -126,6 +126,7 @@ public class WeatherActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 final Weather weather = Utility.handleWeatherResponse(responseText);
+//                通过线程更新UI，
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -163,9 +164,27 @@ public class WeatherActivity extends AppCompatActivity {
         String degree = weather.now.temperature+"℃";
         String weatherInfo = weather.now.more.info;
         titleCity.setText(cityName);
-        titleUpdateTime.setText(updateTime);
+        titleUpdateTime.setText("上次更新时间："+updateTime);
+        titleUpdateTime.setTextSize(9);
         degreeText.setText(degree);
         weatherInfoText.setText(weatherInfo);
+        if(weatherInfo.equals("晴")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_sunny),null,null,null);
+        }else if(weatherInfo.equals("阴")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_overcast),null,null,null);
+        }else if(weatherInfo.equals("多云")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_cloudy),null,null,null);
+        }else if(weatherInfo.equals("小雨")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_little_rain),null,null,null);
+        }else if(weatherInfo.equals("中雨")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_middle_rain),null,null,null);
+        } else if(weatherInfo.equals("大雨")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_huge_rain),null,null,null);
+        }else if(weatherInfo.equals("雷阵雨")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_thunder_temp_rain),null,null,null);
+        }else if(weatherInfo.equals("阵雨")){
+            weatherInfoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_temp_rain),null,null,null);
+        }
         forecastLayout.removeAllViews();
         for(Forecast forecast:weather.forecastList){
             View view = LayoutInflater.from(this).inflate(R.layout.forecast_item,forecastLayout,false);
@@ -192,8 +211,8 @@ public class WeatherActivity extends AppCompatActivity {
             }else if(forecast.more.info.equals("阵雨")){
                 infoText.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_temp_rain),null,null,null);
             }
-            maxText.setText(forecast.temperature.max);
-            minText.setText(forecast.temperature.min);
+            maxText.setText(forecast.temperature.max+"℃");
+            minText.setText(forecast.temperature.min+"℃");
             forecastLayout.addView(view);
         }
         if(weather.aqi!=null){
@@ -207,10 +226,9 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
-//        if(!activeFlag){
+//        启动service
             Intent intent = new Intent(this, AutoUpdateService.class);
             startService(intent);
-//            activeFlag=true;
 //        }
     }
     private void loadBingPic(){
